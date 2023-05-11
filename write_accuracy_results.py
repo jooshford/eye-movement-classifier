@@ -10,11 +10,11 @@ def load_results(file_path):
 
 
 def write_results(file_path, results):
-    results.to_csv(file_path)
+    results.to_csv(file_path, index=False)
 
 
-def write_accuracy_results(model_function,
-                           model_name,
+def write_accuracy_results(model_functions,
+                           model_names,
                            down_sample_rate,
                            training_data,
                            feature_selection='none',
@@ -43,23 +43,24 @@ def write_accuracy_results(model_function,
             'accuracy_B'])
 
     performances = run_n_times(
-        model_function,
+        model_functions,
         training_data,
         n=num_repeats
     )
 
-    new_data = pd.DataFrame({
-        'model': [model_name for _ in range(len(performances))],
-        'down_sample_rate': [down_sample_rate for _ in range(len(performances))],
-        'feature_selection': [feature_selection for _ in range(len(performances))],
-        'accuracy_overall': [x.accuracy() for x in performances],
-        'accuracy_N': [x.accuracy('N') for x in performances],
-        'accuracy_L': [x.accuracy('L') for x in performances],
-        'accuracy_R': [x.accuracy('R') for x in performances],
-        'accuracy_B': [x.accuracy('B') for x in performances]
-    })
+    for i in range(len(performances)):
+        new_data = pd.DataFrame({
+            'model': [model_names[i] for _ in range(len(performances[i]))],
+            'down_sample_rate': [down_sample_rate for _ in range(len(performances[i]))],
+            'feature_selection': [feature_selection for _ in range(len(performances[i]))],
+            'accuracy_overall': [x.accuracy() for x in performances[i]],
+            'accuracy_N': [x.accuracy('N') for x in performances[i]],
+            'accuracy_L': [x.accuracy('L') for x in performances[i]],
+            'accuracy_R': [x.accuracy('R') for x in performances[i]],
+            'accuracy_B': [x.accuracy('B') for x in performances[i]]
+        })
 
-    results = pd.concat([results, new_data])
+        results = pd.concat([results, new_data])
 
     write_results(
         f'{RESULTS_DIRECTORY}/results.csv',

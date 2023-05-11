@@ -69,21 +69,23 @@ class ClassifierPerformance:
         return output_string
 
 
-def run_n_times(model, training_data: pd.DataFrame, n=50):
-    repeated_performance = list()
-    for i in range(n):
-        repeated_performance.append(cross_validate(training_data, model))
+def run_n_times(model_functions, training_data: pd.DataFrame, n=50):
+    repeated_performances = [list() for _ in range(len(model_functions))]
+    for _ in range(n):
+        performances = cross_validate(training_data, model_functions)
+        for i in range(len(model_functions)):
+            repeated_performances[i].append(performances[i])
 
-    return repeated_performance
+    return repeated_performances
 
 
-def cross_validate(training_data: pd.DataFrame, model_function):
+def cross_validate(training_data: pd.DataFrame, model_functions):
     X = training_data[get_features_from_data(training_data, training=True)]
     y = training_data['label']
 
     max_file = X['file_num'].max()
 
-    predicted_list = list()
+    predicted_lists = [list() for _ in range(len(model_functions))]
     true = list()
 
     k_folds = KFold(CV_NUM_FOLDS, shuffle=True)
@@ -97,26 +99,28 @@ def cross_validate(training_data: pd.DataFrame, model_function):
             training_data, training=False)]
         y_test = y.iloc[test_index]
 
-        trained_classifier = model_function().fit(X_train, y_train)
+        trained_classifiers = [model_function().fit(
+            X_train, y_train) for model_function in model_functions]
 
-        previous_L = 0
-        previous_R = 0
-        previous_B = 0
-        for _, window in X_test.iterrows():
-            window['previous_L'] = previous_L
-            window['previous_R'] = previous_R
-            window['previous_B'] = previous_B
-            predicted = trained_classifier.predict(pd.DataFrame(window).T)
-            previous_L = int(predicted == 1)
-            previous_R = int(predicted == 2)
-            previous_B = int(predicted == 3)
-            predicted_list.extend(predicted)
+        previous_L = [0 for _ in range(len(model_functions))]
+        previous_R = [0 for _ in range(len(model_functions))]
+        previous_B = [0 for _ in range(len(model_functions))]
+        for _, row in X_test.iterrows():
+            window = row.copy()
+            window_dataframe = pd.DataFrame(window).T
+            for i in range(len(model_functions)):
+                window_dataframe['previous_L'] = [previous_L[i]]
+                window_dataframe['previous_R'] = [previous_R[i]]
+                window_dataframe['previous_B'] = [previous_B[i]]
+                predicted = trained_classifiers[i].predict(window_dataframe)
+                previous_L[i] = int(predicted == 1)
+                previous_R[i] = int(predicted == 2)
+                previous_B[i] = int(predicted == 3)
+                predicted_lists[i].extend(predicted)
 
         true.extend(y_test)
 
-    print(ClassifierPerformance(predicted_list, true).confusion_matrix())
-
-    return ClassifierPerformance(predicted_list, true)
+    return [ClassifierPerformance(predicted_list, true) for predicted_list in predicted_lists]
 
 
 def test_time(training_data: pd.DataFrame,

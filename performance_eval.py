@@ -17,10 +17,12 @@ class ClassifierPerformance:
         self.predicted_N = list()
         self.predicted_L = list()
         self.predicted_R = list()
+        self.predicted_B = list()
 
         self.true_N = list()
         self.true_L = list()
         self.true_R = list()
+        self.true_B = list()
         for i in range(len(true)):
             if true[i] == 0:
                 self.predicted_N.append(predicted[i])
@@ -31,6 +33,9 @@ class ClassifierPerformance:
             elif true[i] == 2:
                 self.predicted_R.append(predicted[i])
                 self.true_R.append(true[i])
+            elif true[i] == 3:
+                self.predicted_B.append(predicted[i])
+                self.true_B.append(true[i])
 
     def accuracy(self, type=None):
         if type == None:
@@ -41,19 +46,24 @@ class ClassifierPerformance:
             return accuracy_score(self.predicted_L, self.true_L)
         if type == 'R':
             return accuracy_score(self.predicted_R, self.true_R)
+        if type == 'B':
+            return accuracy_score(self.predicted_B, self.true_B)
 
     def confusion_matrix(self):
         return pd.DataFrame(confusion_matrix(self.true, self.predicted),
                             columns=['Predicted N',
-                                     'Predicted L', 'Predicted R'],
-                            index=['True N', 'True L', 'True R']
+                                     'Predicted L',
+                                     'Predicted R',
+                                     'Predicted B'],
+                            index=['True N', 'True L', 'True R', 'True B']
                             )
 
     def __str__(self):
         output_string = f'overall accuracy: {self.accuracy():.3f}\n'
         output_string += f'non-event accuracy: {self.accuracy("N"):.3f}\n'
         output_string += f'left-look accuracy: {self.accuracy("L"):.3f}\n'
-        output_string += f'right-look accuracy: {self.accuracy("R"):.3f}\n\n'
+        output_string += f'right-look accuracy: {self.accuracy("R"):.3f}\n'
+        output_string += f'blink accuracy: {self.accuracy("B"):.3f}\n\n'
         output_string += f'{self.confusion_matrix()}'
 
         return output_string
@@ -68,27 +78,45 @@ def run_n_times(model, training_data: pd.DataFrame, n=50):
 
 
 def cross_validate(training_data: pd.DataFrame, model_function):
-    X = training_data[get_features_from_data(training_data)]
+    X = training_data[get_features_from_data(training_data, training=True)]
     y = training_data['label']
 
-    predicted = list()
+    max_file = X['file_num'].max()
+
+    predicted_list = list()
     true = list()
 
     k_folds = KFold(CV_NUM_FOLDS, shuffle=True)
-    for train_index, test_index in k_folds.split(X):
-        X_train = X.iloc[train_index]
+    for train_files, test_files in k_folds.split(list(range(max_file+1))):
+        train_index = np.where(X['file_num'].isin(train_files))
+        test_index = np.where(X['file_num'].isin(test_files))
+        X_train = X.iloc[train_index][get_features_from_data(
+            training_data, training=False)]
         y_train = y.iloc[train_index]
-        X_test = X.iloc[test_index]
+        X_test = X.iloc[test_index][get_features_from_data(
+            training_data, training=False)]
         y_test = y.iloc[test_index]
 
         trained_classifier = model_function().fit(X_train, y_train)
 
-        predicted.extend(trained_classifier.predict(X_test))
+        previous_L = 0
+        previous_R = 0
+        previous_B = 0
+        for _, window in X_test.iterrows():
+            window['previous_L'] = previous_L
+            window['previous_R'] = previous_R
+            window['previous_B'] = previous_B
+            predicted = trained_classifier.predict(pd.DataFrame(window).T)
+            previous_L = int(predicted == 1)
+            previous_R = int(predicted == 2)
+            previous_B = int(predicted == 3)
+            predicted_list.extend(predicted)
+
         true.extend(y_test)
 
-    print(ClassifierPerformance(predicted, true).confusion_matrix())
+    print(ClassifierPerformance(predicted_list, true).confusion_matrix())
 
-    return ClassifierPerformance(predicted, true)
+    return ClassifierPerformance(predicted_list, true)
 
 
 def test_time(training_data: pd.DataFrame,

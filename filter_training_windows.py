@@ -61,12 +61,6 @@ def filter_training_windows():
         window_sets.extend(read_directory(
             directory['values'], directory['markers']))
 
-    label_counter = {
-        'N': 0,
-        'L': 0,
-        'R': 0
-    }
-
     previous = 'N'
     for i in range(len(window_sets)):
         for j in range(len(window_sets[i])):
@@ -75,10 +69,10 @@ def filter_training_windows():
             label = window[1]
             window_dataframe = pd.DataFrame({'V': values})
             window_dataframe.to_csv(
-                f'{WINDOWS_DIRECTORY}/{i}_{j}_{label}_{previous}.csv')
+                f'{WINDOWS_DIRECTORY}/{i}_{j}_{label}_{previous}.csv',
+                index=False)
 
-        label_counter[label] += 1
-        previous = label
+            previous = label
 
 
 if __name__ == '__main__':

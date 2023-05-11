@@ -29,7 +29,8 @@ def write_accuracy_results(model_function,
             'accuracy_overall',
             'accuracy_N',
             'accuracy_L',
-            'accuracy_R']]
+            'accuracy_R',
+            'accuracy_B']]
     except:
         results = pd.DataFrame(columns=[
             'model',
@@ -38,8 +39,8 @@ def write_accuracy_results(model_function,
             'accuracy_overall',
             'accuracy_N'
             'accuracy_L',
-            'accuracy_R'
-        ])
+            'accuracy_R',
+            'accuracy_B'])
 
     performances = run_n_times(
         model_function,
@@ -54,7 +55,8 @@ def write_accuracy_results(model_function,
         'accuracy_overall': [x.accuracy() for x in performances],
         'accuracy_N': [x.accuracy('N') for x in performances],
         'accuracy_L': [x.accuracy('L') for x in performances],
-        'accuracy_R': [x.accuracy('R') for x in performances]
+        'accuracy_R': [x.accuracy('R') for x in performances],
+        'accuracy_B': [x.accuracy('B') for x in performances]
     })
 
     results = pd.concat([results, new_data])

@@ -27,6 +27,15 @@ def get_min_index(x):
     return current_min_index
 
 
+def crossings(x):
+    crossings = 0
+    mean = np.mean(x)
+    for i in range(len(x) - 1):
+        crossings += x[i] * x[i+1] < 0
+
+    return crossings
+
+
 def proportion_increasing(x):
     count_increasing = 0
     for i in range(len(x) - 1):
@@ -58,10 +67,11 @@ feature_map = {
 }
 
 
-def get_features_from_data(training_data: pd.DataFrame):
-    return [name for name in training_data.columns if name not in [
-        'Unnamed: 0', 'label'
-    ]]
+def get_features_from_data(training_data: pd.DataFrame, training: bool):
+    excluded_columns = ['Unnamed: 0', 'label']
+    if not training:
+        excluded_columns.extend(['file_num', 'index'])
+    return [name for name in training_data.columns if name not in excluded_columns]
 
 
 def get_selected_features(classifier: Pipeline):

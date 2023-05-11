@@ -37,7 +37,7 @@ def write_accuracy_results(model_functions,
             'down_sample_rate',
             'feature_selection',
             'accuracy_overall',
-            'accuracy_N'
+            'accuracy_N',
             'accuracy_L',
             'accuracy_R',
             'accuracy_B'])

@@ -55,8 +55,7 @@ class ClassifierPerformance:
                                      'Predicted L',
                                      'Predicted R',
                                      'Predicted B'],
-                            index=['True N', 'True L', 'True R', 'True B']
-                            )
+                            index=['True N', 'True L', 'True R', 'True B'])
 
     def __str__(self):
         output_string = f'overall accuracy: {self.accuracy():.3f}\n'
@@ -71,7 +70,8 @@ class ClassifierPerformance:
 
 def run_n_times(model_functions, training_data: pd.DataFrame, n=50):
     repeated_performances = [list() for _ in range(len(model_functions))]
-    for _ in range(n):
+    for i in range(n):
+        print(f'Iteration {i}')
         performances = cross_validate(training_data, model_functions)
         for i in range(len(model_functions)):
             repeated_performances[i].append(performances[i])
@@ -80,7 +80,7 @@ def run_n_times(model_functions, training_data: pd.DataFrame, n=50):
 
 
 def cross_validate(training_data: pd.DataFrame, model_functions):
-    X = training_data[get_features_from_data(training_data, training=True)]
+    X = training_data[get_features_from_data(training_data, True)]
     y = training_data['label']
 
     max_file = X['file_num'].max()
@@ -93,11 +93,12 @@ def cross_validate(training_data: pd.DataFrame, model_functions):
         train_index = np.where(X['file_num'].isin(train_files))
         test_index = np.where(X['file_num'].isin(test_files))
         X_train = X.iloc[train_index][get_features_from_data(
-            training_data, training=False)]
+            training_data, False)]
         y_train = y.iloc[train_index]
-        X_test = X.iloc[test_index][get_features_from_data(
-            training_data, training=False)]
-        y_test = y.iloc[test_index]
+        test_data = training_data.iloc[test_index].sort_values(
+            ['file_num', 'index'])
+        X_test = test_data[get_features_from_data(training_data, False)]
+        y_test = test_data['label']
 
         trained_classifiers = [model_function().fit(
             X_train, y_train) for model_function in model_functions]

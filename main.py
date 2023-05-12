@@ -18,8 +18,8 @@ def setup_from_start():
 
 if __name__ == "__main__":
     training_data = pd.read_csv(f'{TRAINING_DIRECTORY}/1.csv')
-    write_accuracy_results([model for model in top_models.values()],
-                           [model_name for model_name in top_models],
+    write_accuracy_results([model for model in models.values()],
+                           [model_name for model_name in models],
                            1,
                            training_data,
-                           num_repeats=2)
+                           num_repeats=10)

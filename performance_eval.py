@@ -49,6 +49,59 @@ class ClassifierPerformance:
         if type == 'B':
             return accuracy_score(self.predicted_B, self.true_B)
 
+    def count_false_positives(self):
+        false_positives = 0
+        previous_predicted = 0
+        event_happened = False
+        for i in range(len(self.predicted)):
+            current_predicted = self.predicted[i]
+            current_true = self.true[i]
+            if current_predicted == 0:
+                if event_happened == False and previous_predicted != 0:
+                    false_positives += 1
+
+                event_happened = False
+                previous_predicted = current_predicted
+                continue
+
+            if current_true != 0:
+                event_happened = True
+
+            previous_predicted = current_predicted
+
+        return false_positives
+
+    def count_events(self):
+        event_count = 0
+        previous_label = 0
+        for label in self.true:
+            if label != 0 and previous_label == 0:
+                event_count += 1
+
+        return event_count
+
+    def count_misclassified_events(self):
+        misclassified_events = 0
+        previous_true = 0
+        classified_event = False
+        for i in range(len(self.predicted)):
+            current_predicted = self.predicted[i]
+            current_true = self.true[i]
+            if current_true == 0:
+                if classified_event == False and previous_true != 0:
+                    misclassified_events += 1
+
+                classified_event = False
+                previous_true = current_true
+                continue
+
+            if current_predicted == current_true:
+                classified_event = True
+
+            previous_true = current_true
+
+        return misclassified_events
+
     def confusion_matrix(self):
         return pd.DataFrame(confusion_matrix(self.true, self.predicted),
                             columns=['Predicted N',

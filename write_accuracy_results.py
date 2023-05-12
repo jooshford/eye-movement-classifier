@@ -5,6 +5,21 @@ from models import models, top_models
 from performance_eval import run_n_times
 
 
+accuracy_measures = [
+    'model',
+    'down_sample_rate',
+    'feature_selection',
+    'accuracy_overall',
+    'accuracy_N',
+    'accuracy_L',
+    'accuracy_R',
+    'accuracy_B',
+    'false_positives',
+    'misclassifications',
+    'num_events'
+]
+
+
 def load_results(file_path):
     return pd.read_csv(file_path)
 
@@ -22,25 +37,9 @@ def write_accuracy_results(model_functions,
     try:
         results = load_results(
             f'{RESULTS_DIRECTORY}/results.csv')
-        results = results[[
-            'model',
-            'down_sample_rate',
-            'feature_selection',
-            'accuracy_overall',
-            'accuracy_N',
-            'accuracy_L',
-            'accuracy_R',
-            'accuracy_B']]
+        results = results[accuracy_measures]
     except:
-        results = pd.DataFrame(columns=[
-            'model',
-            'down_sample_rate',
-            'feature_selection',
-            'accuracy_overall',
-            'accuracy_N',
-            'accuracy_L',
-            'accuracy_R',
-            'accuracy_B'])
+        results = pd.DataFrame(columns=accuracy_measures)
 
     performances = run_n_times(
         model_functions,
@@ -57,7 +56,10 @@ def write_accuracy_results(model_functions,
             'accuracy_N': [x.accuracy('N') for x in performances[i]],
             'accuracy_L': [x.accuracy('L') for x in performances[i]],
             'accuracy_R': [x.accuracy('R') for x in performances[i]],
-            'accuracy_B': [x.accuracy('B') for x in performances[i]]
+            'accuracy_B': [x.accuracy('B') for x in performances[i]],
+            'false_positives': [x.count_false_positives() for x in performances[i]],
+            'misclassifications': [x.count_misclassified_events() for x in performances[i]],
+            'num_events': [x.count_events() for x in performances[i]]
         })
 
         results = pd.concat([results, new_data])

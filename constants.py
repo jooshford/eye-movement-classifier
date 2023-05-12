@@ -6,6 +6,10 @@ DATA_DIRECTORIES = {
     'greg': {
         'values': 'data/greg/values',
         'markers': 'data/greg/markers'
+    },
+    'yifei': {
+        'values': 'data/yifei/values',
+        'markers': 'data/yifei/markers'
     }
 }
 

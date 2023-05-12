@@ -10,7 +10,7 @@ def load_results(file_path):
 
 
 def write_results(file_path, results):
-    results.to_csv(file_path)
+    results.to_csv(file_path, index=False)
 
 
 def write_time_results(model_function,

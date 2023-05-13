@@ -17,9 +17,15 @@ def setup_from_start():
 
 
 if __name__ == "__main__":
-    training_data = pd.read_csv(f'{TRAINING_DIRECTORY}/1.csv')
-    write_accuracy_results([model for model in models.values()],
-                           [model_name for model_name in models],
-                           1,
-                           training_data,
-                           num_repeats=10)
+    for down_sample_rate in DOWN_SAMPLE_RATES:
+        model_dict = models if down_sample_rate == 1 else top_models
+
+        training_data = pd.read_csv(
+            f'{TRAINING_DIRECTORY}/{down_sample_rate}.csv')
+        for model_name, model_function in model_dict.items():
+            print(model_name)
+            write_time_results(model_function,
+                               model_name,
+                               down_sample_rate,
+                               training_data,
+                               num_repeats=100)

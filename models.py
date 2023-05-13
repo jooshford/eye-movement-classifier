@@ -31,6 +31,6 @@ models = {
 top_models = {
     'Random Forest #1:': random_forest.model_1,
     'SVM #3: RBF': svm.model_3,
-    'KNN #10: K = 10': knn.model_7,
+    'KNN #5: K = 5': knn.model_2,
     'Logistic regression #33: Elasticnet ratio=0.25': logistic_regression.model_6,
 }

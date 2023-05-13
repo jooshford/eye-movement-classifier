@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 
-def classify(trained_classifier, window, previous_L, previous_R):
+def classify(trained_classifier, window, previous_L, previous_R, previous_B):
     feature_values = {
         'min': [0],
         'max': [0],
@@ -20,7 +20,8 @@ def classify(trained_classifier, window, previous_L, previous_R):
         'crossings': [0],
         'proportion_increasing': [0],
         'previous_L': previous_L,
-        'previous_R': previous_R
+        'previous_R': previous_R,
+        'previous_B': previous_B
     }
 
     for name in get_selected_features(trained_classifier):
@@ -31,7 +32,7 @@ def classify(trained_classifier, window, previous_L, previous_R):
 
 
 def train(classifier_pipeline, training_data: pd.DataFrame):
-    X = training_data[get_features_from_data(training_data)]
+    X = training_data[get_features_from_data(training_data, False)]
     y = training_data['label']
 
     return classifier_pipeline.fit(X, y)

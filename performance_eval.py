@@ -198,7 +198,8 @@ def test_time(training_data: pd.DataFrame,
             trained_classifier,
             window,
             int(current_previous == 1),
-            int(current_previous == 2))
+            int(current_previous == 2),
+            int(current_previous == 3))
         end_time = time.time()
 
         times.append(end_time - start_time)

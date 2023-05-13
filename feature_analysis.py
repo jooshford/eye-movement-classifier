@@ -30,16 +30,22 @@ def get_min_index(x):
 def crossings(x):
     crossings = 0
     mean = np.mean(x)
+    current = x[0]
     for i in range(len(x) - 1):
-        crossings += x[i] * x[i+1] < 0
+        next = x[i+1]
+        crossings += current * next < mean
+        current = next
 
     return crossings
 
 
 def proportion_increasing(x):
     count_increasing = 0
+    current = x[0]
     for i in range(len(x) - 1):
-        count_increasing += x[i] < x[i+1]
+        next = x[i+1]
+        count_increasing += current < next
+        current = next
 
     return float(count_increasing) / len(x)
 

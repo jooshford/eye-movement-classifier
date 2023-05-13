@@ -4,6 +4,7 @@ import numpy as np
 import seaborn as sns
 import math
 from constants import *
+from models import top_models
 
 
 def single_classifier(name, results):
@@ -67,18 +68,17 @@ def compare_classifiers(results_dict, model_names=None, accuracy_types=None):
     plt.show()
 
 
-def scatter_time_accuracy(results,
-                          times_dict,
-                          title='Comparing Accuracy vs. Execuation Time Between Classifiers',
-                          down_sample_rate=1):
-    models = results.keys()
-    model_type = [model.split(' #')[0] for model in models]
-    accuracies = [np.mean(model['Overall']) for model in results.values()]
-    times = [times_dict[model] for model in results.keys()]
+def compare_classifier_methods(model_performance,
+                               title='Comparing Accuracy vs. Execution Time Between Classifiers'):
+    relevant_models = {k: v for k, v in model_performance.items() if k[1] == 1}
+    model_names = [model[0] for model in relevant_models]
+    model_types = [name.split(' #')[0] for name in model_names]
+    accuracies = [model['accuracy'] for _, model in relevant_models.items()]
+    times = [model['time'] for _, model in relevant_models.items()]
 
     data = pd.DataFrame({
-        'Model': models,
-        'Model Type': model_type,
+        'Model': model_names,
+        'Model Type': model_types,
         'Accuracy': accuracies,
         'Execution Time (seconds)': times
     })
@@ -88,5 +88,29 @@ def scatter_time_accuracy(results,
                     y='Accuracy',
                     hue='Model Type')
     plt.title(title)
-    plt.savefig(f'figure_{down_sample_rate}.png')
+    plt.show()
+
+
+def compare_down_sample_rates(model_performance,
+                              title='Comparing Accuracy vs. Execution Time Between Down Sample Rates'):
+    relevant_models = {k: v for k,
+                       v in model_performance.items() if k[0] in top_models}
+    model_names = [model[0] for model in relevant_models]
+    down_sample_rates = [model[1] for model in relevant_models]
+    accuracies = [model['accuracy'] for _, model in relevant_models.items()]
+    times = [model['time'] for _, model in relevant_models.items()]
+
+    data = pd.DataFrame({
+        'Model': model_names,
+        'Down Sample Rate': down_sample_rates,
+        'Accuracy': accuracies,
+        'Execution Time (seconds)': times
+    })
+
+    sns.scatterplot(data,
+                    x='Execution Time (seconds)',
+                    y='Accuracy',
+                    hue='Down Sample Rate',
+                    palette=sns.color_palette())
+    plt.title(title)
     plt.show()

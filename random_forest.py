@@ -12,13 +12,3 @@ def model_1():
     return Pipeline([
         ('classification', RandomForestClassifier())
     ])
-
-
-def model_2():
-    '''
-    Random Forest #2 (selected features)
-    '''
-    return Pipeline([
-        ('feature_selection', RFE(RandomForestClassifier())),
-        ('classification', RandomForestClassifier())
-    ])

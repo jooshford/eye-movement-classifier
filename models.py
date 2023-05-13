@@ -1,7 +1,9 @@
 import knn
 import svm
+import mlp
 import random_forest
 import logistic_regression
+import naive_bayes
 
 models = {
     'Random Forest #1:': random_forest.model_1,
@@ -18,19 +20,32 @@ models = {
     'KNN #7: K = 10': knn.model_7,
     'KNN #8: K = 11': knn.model_8,
     'KNN #9: K = 12': knn.model_9,
-    'Logistic regression #1: L1 SAGA': logistic_regression.model_1,
-    'Logistic regression #2: L2 LBFGS': logistic_regression.model_2,
-    'Logistic regression #3: L2 Newton-GC': logistic_regression.model_3,
-    'Logistic regression #4: L2 SAG': logistic_regression.model_4,
-    'Logistic regression #5: L2 SAGA': logistic_regression.model_5,
-    'Logistic regression #6: Elasticnet ratio=0.25': logistic_regression.model_6,
-    'Logistic regression #7: Elasticnet ratio=0.5': logistic_regression.model_7,
-    'Logistic regression #8: Elasticnet ratio=0.75': logistic_regression.model_8,
+    'Logistic Regression #1: L1 SAGA': logistic_regression.model_1,
+    'Logistic Regression #2: L2 LBFGS': logistic_regression.model_2,
+    'Logistic Regression #3: L2 Newton-GC': logistic_regression.model_3,
+    'Logistic Regression #4: L2 SAG': logistic_regression.model_4,
+    'Logistic Regression #5: L2 SAGA': logistic_regression.model_5,
+    'Logistic Regression #6: Elasticnet ratio=0.25': logistic_regression.model_6,
+    'Logistic Regression #7: Elasticnet ratio=0.5': logistic_regression.model_7,
+    'Logistic Regression #8: Elasticnet ratio=0.75': logistic_regression.model_8,
+    'MLP #1: [10]': mlp.model_1,
+    'MLP #2: [10, 10]': mlp.model_2,
+    'MLP #3: [10, 10, 10]': mlp.model_3,
+    'MLP #4: [20, 10] (tanh)': mlp.model_4,
+    'MLP #5: [15, 5] (identity)': mlp.model_5,
+    'MLP #6: [10, 20, 30] (logistic)': mlp.model_6,
+    'MLP #7: [20, 30, 40] (relu)': mlp.model_7,
+    'MLP #8: [30, 20] (tanh)': mlp.model_8,
+    'MLP #9: [50] (relu)': mlp.model_9,
+    'Naive Bayes #1: Gaussian': naive_bayes.model_1,
+    'Naive Bayes #2: Bernoulli': naive_bayes.model_2
 }
 
 top_models = {
-    'Random Forest #1:': random_forest.model_1,
+    'RF #1:': random_forest.model_1,
     'SVM #3: RBF': svm.model_3,
-    'KNN #5: K = 5': knn.model_2,
-    'Logistic regression #33: Elasticnet ratio=0.25': logistic_regression.model_6,
+    'KNN #2: K = 5': knn.model_2,
+    'LR #6: Elasticnet ratio=0.25': logistic_regression.model_6,
+    'MLP #4: [20, 10] (tanh)': mlp.model_4,
+    'Naive Bayes #2: Bernoulli': naive_bayes.model_2
 }

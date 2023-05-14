@@ -5,28 +5,17 @@ import numpy as np
 import pandas as pd
 
 
-def classify(trained_classifier, window, previous_L, previous_R, previous_B):
-    feature_values = {
-        'min': [0],
-        'max': [0],
-        'mean': [0],
-        'sd': [0],
-        'median': [0],
-        'max_median_distance': [0],
-        'min_median_distance': [0],
-        'proportion_above_mean': [0],
-        'min_index': [0],
-        'max_index': [0],
-        'crossings': [0],
-        'proportion_increasing': [0],
-        'previous_L': previous_L,
-        'previous_R': previous_R,
-        'previous_B': previous_B
-    }
+def classify(trained_classifier, window, previous_L, previous_R, previous_B,
+             selected_features):
 
-    for name in get_selected_features(trained_classifier):
-        if 'previous' not in name:
-            feature_values[name][0] = feature_map[name](window)
+    feature_values = {name: [feature_map[name](
+        window)] for name in selected_features if 'previous' not in name}
+    feature_values['previous_L'] = previous_L
+    feature_values['previous_R'] = previous_R
+    feature_values['previous_B'] = previous_B
+
+    print(feature_values)
+    input()
 
     return trained_classifier.predict(pd.DataFrame(feature_values))
 

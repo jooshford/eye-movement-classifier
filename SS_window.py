@@ -8,9 +8,8 @@ import time
 import data_cleaning
 
 import streaming_classifier
-import random_forest
-import svm
-import knn
+from models import top_models, top_features
+from feature_analysis import get_features_from_data
 from constants import *
 
 
@@ -24,15 +23,12 @@ if __name__ == '__main__':
 
     # classifiers
     print('Training classifiers...')
-    training_data = pd.read_csv(TEST_TRAINING_DATA)
-    models = {
-        'random forest': streaming_classifier.train(random_forest.model_1(),
-                                                    training_data),
-        'svm': streaming_classifier.train(svm.model_3(),
-                                          training_data),
-        'knn': streaming_classifier.train(knn.model_10(),
-                                          training_data)
-    }
+    models_to_use = {name.split(' #')[0]:
+                     streaming_classifier.train(
+        top_models[name],
+        pd.read_csv(f'{TRAINING_DIRECTORY}/{top_features[name]}'))
+        for name in top_models}
+
     print('Trained classifiers.\n')
 
     # bluetooth
@@ -50,7 +46,19 @@ if __name__ == '__main__':
     serial.timeout = input_buffer_size/INPUT_SAMPLE_RATE
     serial.set_buffer_size(rx_size=input_buffer_size)
 
-    model = models['random forest']
+    # names are: 'Random Forest', 'SVM', 'MLP',
+    # 'KNN', 'Naive Bayes', 'Logistic Regression'.
+    selected_model_name = 'Random Forest'
+    model = models_to_use[selected_model_name]
+    feature_selection = 'none'
+    for name, feature_selection_method in top_features.items():
+        if selected_model_name in name:
+            feature_selection = feature_selection_method
+
+    training_data = pd.read_csv(
+        f'{TRAINING_DIRECTORY}/{feature_selection}.csv')
+
+    selected_features = get_features_from_data(training_data, False)
 
     processed_v_cache = list()
     current_start_time = 0
@@ -58,7 +66,8 @@ if __name__ == '__main__':
     event_map = {
         0: 'stop',
         1: 'left',
-        2: 'right'
+        2: 'right',
+        3: 'forward'
     }
 
     movement_map = {
@@ -96,12 +105,15 @@ if __name__ == '__main__':
             window_times, processed_v_cache, SIGMA_GAUSS)
 
         down_sampled_window = [filtered_window[i] for i in range(
-            len(filtered_window)) if i % TEST_DOWN_SAMPLE_RATE == 0]
+            len(filtered_window)) if i % DOWN_SAMPLE_RATE == 0]
         event_num = streaming_classifier.classify(
             model,
             filtered_window,
             int(event_num == 1),
-            int(event_num == 2))
+            int(event_num == 2),
+            int(event_num == 3),
+            selected_features
+        )
 
         event = event_map[event_num[0]]
         if event != previous_event and event != 'stop':

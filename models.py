@@ -42,10 +42,19 @@ models = {
 }
 
 top_models = {
-    'RF #1:': random_forest.model_1,
+    'Random Forest #1:': random_forest.model_1,
     'SVM #3: RBF': svm.model_3,
     'KNN #2: K = 5': knn.model_2,
-    'LR #6: Elasticnet ratio=0.25': logistic_regression.model_6,
+    'Logistic Regression #6: Elasticnet ratio=0.25': logistic_regression.model_6,
     'MLP #4: [20, 10] (tanh)': mlp.model_4,
     'Naive Bayes #2: Bernoulli': naive_bayes.model_2
+}
+
+top_features = {
+    'Random Forest #1:': 'RFE_LR',
+    'SVM #3: RBF': 'none',
+    'KNN #2: K = 5': 'RFE_LR',
+    'Logistic Regression #6: Elasticnet ratio=0.25': 'none',
+    'MLP #4: [20, 10] (tanh)': 'none',
+    'Naive Bayes #2: Bernoulli': 'RFE_LR'
 }

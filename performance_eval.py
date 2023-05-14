@@ -187,6 +187,7 @@ def test_time(training_data: pd.DataFrame,
     trained_classifier = streaming_classifier.train(classifier_pipeline,
                                                     training_data)
 
+    selected_features = get_features_from_data(training_data, training=False)
     current_previous = 0
 
     for _ in range(num_repeats):
@@ -199,7 +200,8 @@ def test_time(training_data: pd.DataFrame,
             window,
             int(current_previous == 1),
             int(current_previous == 2),
-            int(current_previous == 3))
+            int(current_previous == 3),
+            selected_features)
         end_time = time.time()
 
         times.append(end_time - start_time)

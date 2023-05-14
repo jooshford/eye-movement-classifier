@@ -70,7 +70,8 @@ def compare_classifiers(results_dict, model_names=None, accuracy_types=None):
 
 def compare_classifier_methods(model_performance,
                                title='Comparing Accuracy vs. Execution Time Between Classifiers'):
-    relevant_models = {k: v for k, v in model_performance.items() if k[1] == 1}
+    relevant_models = {
+        k: v for k, v in model_performance.items() if k[1] == 1 and k[2] == 'none'}
     model_names = [model[0] for model in relevant_models]
     model_types = [name.split(' #')[0] for name in model_names]
     accuracies = [model['accuracy'] for _, model in relevant_models.items()]
@@ -94,7 +95,7 @@ def compare_classifier_methods(model_performance,
 def compare_down_sample_rates(model_performance,
                               title='Comparing Accuracy vs. Execution Time Between Down Sample Rates'):
     relevant_models = {k: v for k,
-                       v in model_performance.items() if k[0] in top_models}
+                       v in model_performance.items() if k[0] in top_models and k[2] == 'none'}
     model_names = [model[0] for model in relevant_models]
     down_sample_rates = [model[1] for model in relevant_models]
     accuracies = [model['accuracy'] for _, model in relevant_models.items()]
@@ -111,6 +112,31 @@ def compare_down_sample_rates(model_performance,
                     x='Execution Time (seconds)',
                     y='Accuracy',
                     hue='Down Sample Rate',
+                    palette=sns.color_palette())
+    plt.title(title)
+    plt.show()
+
+
+def compare_feature_selection(model_performance,
+                              title='Comparing Accuracy vs. Execution Time Between Feature Selection Methods'):
+    relevant_models = {k: v for k,
+                       v in model_performance.items() if k[0] in top_models and k[1] == DOWN_SAMPLE_RATE}
+    model_names = [model[0] for model in relevant_models]
+    feature_selection_methods = [model[2] for model in relevant_models]
+    accuracies = [model['accuracy'] for _, model in relevant_models.items()]
+    times = [model['time'] for _, model in relevant_models.items()]
+
+    data = pd.DataFrame({
+        'Model': model_names,
+        'Feature Selection Method': feature_selection_methods,
+        'Accuracy': accuracies,
+        'Execution Time (seconds)': times
+    })
+
+    sns.scatterplot(data,
+                    x='Execution Time (seconds)',
+                    y='Accuracy',
+                    hue='Feature Selection Method',
                     palette=sns.color_palette())
     plt.title(title)
     plt.show()

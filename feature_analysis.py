@@ -73,7 +73,7 @@ feature_map = {
 }
 
 
-def get_features_from_data(training_data: pd.DataFrame, training: bool):
+def get_features_from_data(training_data: pd.DataFrame, training: bool = True):
     excluded_columns = ['Unnamed: 0', 'label']
     if not training:
         excluded_columns.extend(['file_num', 'index'])

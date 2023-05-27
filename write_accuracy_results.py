@@ -69,3 +69,13 @@ def write_accuracy_results(model_functions,
         results)
 
     return results
+
+
+if __name__ == '__main__':
+    training_data = pd.read_csv(f'{TRAINING_DIRECTORY}/{200}.csv')
+    write_accuracy_results([top_models['Random Forest #1:']],
+                           ['Random Forest #1:'],
+                           200,
+                           training_data,
+                           'RFE_LR',
+                           1)

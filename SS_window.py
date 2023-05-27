@@ -25,8 +25,8 @@ if __name__ == '__main__':
     print('Training classifiers...')
     models_to_use = {name.split(' #')[0]:
                      streaming_classifier.train(
-        top_models[name],
-        pd.read_csv(f'{TRAINING_DIRECTORY}/{top_features[name]}'))
+        top_models[name](),
+        pd.read_csv(f'{TRAINING_DIRECTORY}/{top_features[name]}.csv'))
         for name in top_models}
 
     print('Trained classifiers.\n')
@@ -39,8 +39,8 @@ if __name__ == '__main__':
     bluetooth.flushInput()  # This gives the bluetooth a little kick
 
     # SpikerBox
-    input_buffer_size = INCREMENT_TIME * \
-        INPUT_SAMPLE_RATE + 1  # keep betweein 2000-20000
+    input_buffer_size = int(INCREMENT_TIME *
+                            INPUT_SAMPLE_RATE + 1)  # keep betweein 2000-20000
 
     serial = Serial(port=C_PORT, baudrate=BAUD_RATE)
     serial.timeout = input_buffer_size/INPUT_SAMPLE_RATE
@@ -64,23 +64,23 @@ if __name__ == '__main__':
     current_start_time = 0
     event_num = 0
     event_map = {
-        0: 'stop',
+        0: 'none',
         1: 'left',
         2: 'right',
         3: 'forward'
     }
 
-    movement_map = {
-        ('stop', 'left'): 'left',
-        ('stop', 'right'): 'right',
+    direction_map = {
+        ('none', 'left'): 'left',
+        ('none', 'right'): 'right',
         ('left', 'left'): 'left',
-        ('left', 'right'): 'stop',
-        ('right', 'left'): 'stop',
+        ('left', 'right'): 'none',
+        ('right', 'left'): 'none',
         ('right', 'right'): 'right'
     }
 
-    current_direction = 'stop'
-    previous_event = 'stop'
+    current_direction = 'none'
+    previous_event = 'none'
     # this loop runs truly in parallel with the print loop, constantly checking
     while True:
         # Read data from SpikerBox into a buffer of size input_buffer_size.
@@ -99,7 +99,7 @@ if __name__ == '__main__':
 
         window_times = np.linspace(current_start_time,
                                    current_start_time + WINDOW_TIME,
-                                   WINDOW_TIME)
+                                   WINDOW_TIME*PROCESSED_SAMPLE_RATE)
 
         filtered_window = data_cleaning.process_gaussian_fft(
             window_times, processed_v_cache, SIGMA_GAUSS)
@@ -108,22 +108,26 @@ if __name__ == '__main__':
             len(filtered_window)) if i % DOWN_SAMPLE_RATE == 0]
         event_num = streaming_classifier.classify(
             model,
-            filtered_window,
+            down_sampled_window,
             int(event_num == 1),
             int(event_num == 2),
             int(event_num == 3),
             selected_features
         )
-
         event = event_map[event_num[0]]
-        if event != previous_event and event != 'stop':
-            current_direction = movement_map[(current_direction, event)]
+        if event != previous_event and event in ['left', 'right']:
+            current_direction = direction_map[(current_direction, event)]
+
+        if previous_event != event and event != 'none':
+            if event in ['left', 'right']:
+                instruction_bytes = current_direction.encode('utf_8')
+            elif event == 'forward':
+                print(event)
+                instruction_bytes = event.encode('utf_8')
+
+            bluetooth.write(instruction_bytes)
 
         previous_event = event
-        # encode to utf-8
-        direction_bytes = current_direction.encode('utf_8')
-        # communicate to bluetooth
-        bluetooth.write(direction_bytes)
         end_time = time.time()
 
         print(f'{current_direction} (execution time: {(end_time - start_time):.4f})')

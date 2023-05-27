@@ -75,5 +75,30 @@ def filter_training_windows():
             previous = label
 
 
+def add_training_windows(new_directory):
+    existing_files = listdir('data/windows')
+    previous_file_num = max([int(x.split('_')[0]) for x in existing_files])
+
+    window_sets = list()
+    window_sets.extend(read_directory(
+        new_directory['values'], new_directory['markers']))
+
+    previous = 'N'
+    for i in range(len(window_sets)):
+        for j in range(len(window_sets[i])):
+            window = window_sets[i][j]
+            values = window[0]
+            label = window[1]
+            window_dataframe = pd.DataFrame({'V': values})
+            window_dataframe.to_csv(
+                f'{WINDOWS_DIRECTORY}/{i+previous_file_num+1}_{j}_{label}_{previous}.csv',
+                index=False)
+
+            previous = label
+
+
 if __name__ == '__main__':
-    filter_training_windows()
+    add_training_windows({
+        'values': 'data/yifei-new-2/values',
+        'markers': 'data/yifei-new-2/markers'
+    })

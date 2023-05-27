@@ -78,6 +78,8 @@ class ClassifierPerformance:
             if label != 0 and previous_label == 0:
                 event_count += 1
 
+            previous_label = label
+
         return event_count
 
     def count_misclassified_events(self):

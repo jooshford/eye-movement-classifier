@@ -47,3 +47,7 @@ def write_training_data(down_sample_rate):
     training_data.to_csv(destination, index=False)
 
     return training_data
+
+
+if __name__ == '__main__':
+    write_training_data(200)

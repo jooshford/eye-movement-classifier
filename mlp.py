@@ -1,8 +1,6 @@
 from sklearn.neural_network import MLPClassifier
-from sklearn.compose import ColumnTransformer
-from sklearn.feature_selection import SelectPercentile, chi2, f_classif, mutual_info_classif
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler, OneHotEncoder
+from sklearn.preprocessing import StandardScaler
 
 
 def mlp_custom_pipeline(hidden_layer_sizes, activation='relu', solver='adam', alpha=0.0001, learning_rate_init=0.001, max_iter=10000):

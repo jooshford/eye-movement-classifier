@@ -1,6 +1,4 @@
-import sys
 import pandas as pd
-from models import models, top_models
 from performance_eval import test_time
 from constants import *
 

@@ -73,3 +73,4 @@ def write_feature_selection(file_name, selection_object, training_data):
 
 if __name__ == '__main__':
     training_data = pd.read_csv(f'{TRAINING_DIRECTORY}/{DOWN_SAMPLE_RATE}.csv')
+    write_feature_selection('RFE_LR', rfe_selector_1(), training_data)

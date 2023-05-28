@@ -42,7 +42,19 @@ For example:
 python3 SS.py John_doe CL 42
 ```
 
-During data collection, numbers will print down the terminal indication that the script is running. To mark a relative left look (meaning from center to left or from right to center) press 9, relative right press 0 and a blink press b. The timing of the keypresses does not need to be with the action, but they do need to retain the order. To stop data collection, press `esc`. The output of the script will be placed in the RAW and FFT directories of the corresponding Eye Action. The format of the data will be in a csv with the first column labeled ‘T’ indicating time, second column ‘V’ indicating the voltage and ‘event’ indicating the event. The events are labeled with number: (put in table if you like josh) start event for left - 1, end event for left - 2, start event for right - 3, end event for right - 4, start event for blink - 13, end event for blink - 14, 0 otherwise.
+During data collection, numbers will print down the terminal indication that the script is running. To mark a relative left look (meaning from center to left or from right to center) press 9, relative right press 0 and a blink press b. The timing of the keypresses does not need to be with the action, but they do need to retain the order. To stop data collection, press `esc`. The output of the script will be placed in the RAW and FFT directories of the corresponding Eye Action. The format of the data will be in a csv with the first column labeled ‘T’ indicating time, second column ‘V’ indicating the voltage and ‘event’ indicating the event. The events are labeled with number:
+
+| Event type            | Label |
+| --------------------- | ----- |
+| Start event for left  | 1     |
+| End event for left    | 2     |
+| Start event for right | 3     |
+| End event for right   | 4     |
+| Start event for blink | 13    |
+| End event for blink   | 14    |
+| Otherwise             | 0     |
+
+(put in table if you like josh) start event for left - 1, end event for left - 2, start event for right - 3, end event for right - 4, start event for blink - 13, end event for blink - 14, 0 otherwise.
 
 ### Generating Event Markers
 

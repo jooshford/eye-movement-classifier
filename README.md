@@ -54,8 +54,6 @@ During data collection, numbers will print down the terminal indication that the
 | End event for blink   | 14    |
 | Otherwise             | 0     |
 
-(put in table if you like josh) start event for left - 1, end event for left - 2, start event for right - 3, end event for right - 4, start event for blink - 13, end event for blink - 14, 0 otherwise.
-
 ### Generating Event Markers
 
 To generate event intervals from this data, create a new directory that is in the same root as the User_name directory and the convert_csv.py script, labeled User_name_markers. Within this directory, create new directories named after the Eye Action. Run the script with the following command line arguments: python3 convert_csv.py User_name User_name_markers. The event intervals should be specified in time order and in a csv format.

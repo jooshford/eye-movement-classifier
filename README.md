@@ -90,3 +90,7 @@ python3 SS_windows.py
 ```
 
 Then, wait for the classifications to begin showing up in the terminal.
+
+# Arduino Code
+
+The code to upload to the Arduino is located in `drtive.ino`.

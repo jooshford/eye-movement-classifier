@@ -1,7 +1,8 @@
 import sys
 import pandas as pd
 from constants import *
-from models import models, top_models
+from models import models, top_models, top_features
+from feature_selection import selection_methods
 from performance_eval import run_n_times
 
 
@@ -72,10 +73,26 @@ def write_accuracy_results(model_functions,
 
 
 if __name__ == '__main__':
-    training_data = pd.read_csv(f'{TRAINING_DIRECTORY}/{200}.csv')
-    write_accuracy_results([top_models['Random Forest #1:']],
-                           ['Random Forest #1:'],
-                           200,
-                           training_data,
-                           'RFE_LR',
-                           1)
+    training_data = pd.read_csv(f'{TRAINING_DIRECTORY}/{1}.csv')
+    write_accuracy_results([method for _, method in models.items()],
+                           [name for name, _ in models.items()],
+                           1,
+                           training_data)
+
+    for down_sample_rate in DOWN_SAMPLE_RATES:
+        training_data = pd.read_csv(
+            f'{TRAINING_DIRECTORY}/{down_sample_rate}.csv')
+        if down_sample_rate == 1:
+            continue
+        write_accuracy_results([method for _, method in top_models.items()],
+                               [name for name, _ in top_models.items()],
+                               down_sample_rate,
+                               training_data)
+
+    training_data = pd.read_csv(f'{TRAINING_DIRECTORY}/{DOWN_SAMPLE_RATE}.csv')
+    for name, method in selection_methods.items():
+        write_accuracy_results([method for _, method in top_models.items()],
+                               [name for name, _ in top_models.items()],
+                               DOWN_SAMPLE_RATE,
+                               training_data,
+                               top_features[name])

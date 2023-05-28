@@ -98,7 +98,4 @@ def add_training_windows(new_directory):
 
 
 if __name__ == '__main__':
-    add_training_windows({
-        'values': 'data/yifei-new-2/values',
-        'markers': 'data/yifei-new-2/markers'
-    })
+    filter_training_windows()

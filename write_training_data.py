@@ -50,4 +50,5 @@ def write_training_data(down_sample_rate):
 
 
 if __name__ == '__main__':
-    write_training_data(200)
+    for down_sample_rate in DOWN_SAMPLE_RATES:
+        write_training_data(down_sample_rate)

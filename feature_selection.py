@@ -44,12 +44,19 @@ def select_k_best_2():
     ])
 
 
+def no_algorithm():
+    return Pipeline([
+        ('preprocessing', StandardScaler())
+    ])
+
+
 selection_methods = {
     'RFE_LR': rfe_selector_1(),
     'RFE_RF': rfe_selector_2(),
     'RFE_SVM': rfe_selector_3(),
     'f_classif': select_k_best_1(),
-    'mutual_info': select_k_best_2()
+    'mutual_info': select_k_best_2(),
+    'none': no_algorithm()
 }
 
 
@@ -74,3 +81,8 @@ def write_feature_selection(file_name, selection_object, training_data):
 if __name__ == '__main__':
     training_data = pd.read_csv(f'{TRAINING_DIRECTORY}/{DOWN_SAMPLE_RATE}.csv')
     write_feature_selection('RFE_LR', rfe_selector_1(), training_data)
+    write_feature_selection('RFE_RF', rfe_selector_2(), training_data)
+    write_feature_selection('RFE_SVM', rfe_selector_3(), training_data)
+    write_feature_selection('f_classif', select_k_best_1(), training_data)
+    write_feature_selection('RFE_LR', rfe_selector_1(), training_data)
+    write_feature_selection('none', no_algorithm(), training_data)

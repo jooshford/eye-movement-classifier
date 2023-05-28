@@ -10,7 +10,19 @@ DATA_DIRECTORIES = {
     'yifei': {
         'values': 'data/yifei/values',
         'markers': 'data/yifei/markers'
-    }
+    },
+    'zhehan': {
+        'values': 'data/zhehan/values',
+        'markers': 'data/zhehan/markers'
+    },
+    'yifei-new': {
+        'values': 'data/yifei-new/values',
+        'markers': 'data/yifei-new/markers'
+    },
+    'yifei-new-2': {
+        'values': 'data/yifei-new-2/values',
+        'markers': 'data/yifei-new-2/markers'
+    },
 }
 
 INPUT_SAMPLE_RATE = 20000.0
@@ -27,8 +39,8 @@ INCREMENT_TIME = 0.1
 WINDOW_TIME = 1
 
 CV_NUM_FOLDS = 5
-RESULTS_DIRECTORY = 'data/results'
-TIMES_DIRECTORY = 'data/times'
+RESULTS_DIRECTORY = 'results'
+TIMES_DIRECTORY = 'results'
 
 PLOT_LINE_WIDTH = 0.5
 

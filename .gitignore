@@ -1,4 +1,3 @@
 data/windows
-figures/
-report/
-self-reflection
+self-reflection.md
+.Rhistory
